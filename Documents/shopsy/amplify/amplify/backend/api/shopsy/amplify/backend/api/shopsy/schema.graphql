@@ -1,0 +1,86 @@
+type Product @model @auth(rules: [{ allow: public }]) {
+  product_id: ID! @primaryKey
+  name: String!
+  descp: String
+  quantity: Int!
+  category: String!
+  price: Float!
+  images: [String]
+}
+
+type User @model @auth(rules: [{ allow: public }]) {
+  userid: ID! @primaryKey
+  email: String!
+  phoneno: String
+  address: String
+  image: String
+}
+
+type Cart @model @auth(rules: [{ allow: public }]) {
+  cart_id: ID! @primaryKey
+  userid: ID! @index(name: "byUser")
+  product_id: ID! @index(name: "byProduct")
+  total_amount: Float!
+}
+
+type Query {
+  getProduct(product_id: ID!): Product
+  listProducts: [Product]
+  getUser(userid: ID!): User
+  listUsers: [User]
+  getCart(cart_id: ID!): Cart
+  listCarts: [Cart]
+}
+
+type Mutation {
+  createProduct(
+    product_id: ID!
+    name: String!
+    descp: String
+    quantity: Int!
+    category: String!
+    price: Float!
+    images: [String]
+  ): Product
+
+  updateProduct(
+    product_id: ID!
+    name: String
+    descp: String
+    quantity: Int
+    category: String
+    price: Float
+    images: [String]
+  ): Product
+
+  deleteProduct(product_id: ID!): Product
+
+  createUser(
+    userid: ID!
+    email: String!
+    phoneno: String
+    address: String
+    image: String
+  ): User
+
+  updateUser(
+    userid: ID!
+    email: String
+    phoneno: String
+    address: String
+    image: String
+  ): User
+
+  deleteUser(userid: ID!): User
+
+  createCart(cart_id: ID!, product_id: ID!, userid: ID!, total_amount: Float!): Cart
+  updateCart(cart_id: ID!, total_amount: Float!): Cart
+  deleteCart(cart_id: ID!): Cart
+}
+
+type Subscription {
+  onCreateProduct: Product @aws_subscribe(mutations: ["createProduct"])
+  onUpdateProduct: Product @aws_subscribe(mutations: ["updateProduct"])
+  onDeleteProduct: Product @aws_subscribe(mutations: ["deleteProduct"])
+}
+
